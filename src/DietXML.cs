@@ -4,12 +4,7 @@
 // .NET 8, C# 12
 
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data.Common;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection.Emit;
 using System.Text;
-using System.Xml;
 namespace DietXML
 {
     public class XmlBuilder
