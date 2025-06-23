@@ -95,7 +95,7 @@ Building XML Tags
 ```
 
 
-Now we demonstrate the a key strength of DietXML.
+Now we demonstrate a key strength of DietXML.
 We can simply update the String definition of the schema and the parent attributes will implicitly be added.
 
 ``` csharp
