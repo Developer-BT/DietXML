@@ -242,10 +242,10 @@ xb.AddElement("name", "John Smith").Attributes("employee_number","1234", "user_n
 
 xb.BuildXml();
 Console.WriteLine(xb.output_xml);
-'''
+```
 
 Output:
-'''XML
+```XML
 <root>
   <employee id="1">
     <parent1>
