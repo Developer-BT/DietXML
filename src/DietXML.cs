@@ -4,6 +4,10 @@
 // .NET 8, C# 12
 
 using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.Diagnostics;
+using System.Linq.Expressions;
+using System.Reflection.Metadata;
 using System.Text;
 namespace DietXML
 {
@@ -11,10 +15,20 @@ namespace DietXML
     {
         private DietXmlSchema schema = new DietXmlSchema();
         // Stores all elements to be included in the XML document.
-        private List<element> elements = new List<element>(size_of_batch);
+        internal List<element> elements = new List<element>(size_of_batch);
+
+
+        // tracks the last instance of attributes assigned to a key
+        // whenever a new key is added, the attributes are cleared for that key
+        // if chained into attributes will add the attributes to the last key added
+
+        Dictionary<(int,int),string> parent_attributes = new Dictionary<(int,int), string>();
+
+        Dictionary<int, int> current_keys = new Dictionary<int, int>();
 
         // Tracks the current key path for hierarchical elements.
-        private List<int> current_key = new List<int>();
+        // This is a list of integers where each integer represents a unique key for an element in the hierarchy.
+     //   private List<(int,int)> current_key = new List<(int,int)>();
 
         // Batch size for resizing the elements list.
         const int size_of_batch = 100000;
@@ -30,17 +44,18 @@ namespace DietXML
         public StringBuilder output_xml = new StringBuilder();
 
         // Maps string keys to unique integer IDs for key management.
-        internal Dictionary<string, int> key_list = new Dictionary<string, int>(5000000);
+        internal Dictionary<(string,int ), int> key_list = new Dictionary<(string,int), int>(5000000);
         // currently set to 5000000, some additional tuning parameters need to be added so user can appropiately size
         // set to 5 mill for now to prevent repeatedly extending and havig to allocate more memory to dictionary
 
 
         // Temporary storage for element positions and keys.
         List<int> position_with_keys = new List<int>();
+        List<(int,string)> temp_parent_keys = new List<(int,string)>();
         int[] position;
 
         // Represents a single XML element with its text content and position info.
-        private struct element
+        internal class element
         {
 
             // how individual elements are stored
@@ -58,15 +73,22 @@ namespace DietXML
 
             internal readonly int[] position;
             internal readonly string txt_element;
-            internal readonly string properties;
+            internal string attributes;
+            // list of attributes at a higher level that are inherited by this element
+         
+           
 
             internal element(String txt_element, int[] position)
             {
                 this.txt_element = txt_element;
                 this.position = position;
-                properties = null;
+                
             }
 
+        
+
+           
+            
           
 
             internal int get_level()
@@ -87,21 +109,111 @@ namespace DietXML
         }
 
         // set the text format schema
-        public void set_schema(string txt_schema)
+        public void SetSchema(string txt_schema)
         {
-            schema.set_schema(txt_schema);
+            schema.SetSchema(txt_schema);
         }
 
 
-        // Adds an element to the XML document, recording its value and position.
+        public struct ChainOnElement
+        {
+            internal int index;
+            internal XmlBuilder builder;
+
+            public ChainOnElement(int index, XmlBuilder builder)
+            {
+                this.index = index;
+                this.builder = builder;
+            }
 
 
-        /// <summary>
-        /// Adds an element to the XML document, recording its value and position.
-        /// </summary>
-        /// <param name="nm_element">The name of the element as defined in the schema.</param>
-        /// <param name="txt_element">The text content of the element.</param>
-        public void add_element(string nm_element, string txt_element)
+            public void Attributes(params string[] attributes)
+            {
+                int len = attributes.Length;
+                if (len % 2 != 0) { throw new ArgumentException("Tried to add properites with array containing odd number of elements, not atrribute pairs"); }
+
+                StringBuilder sb = new StringBuilder();
+
+                for (int i = 0; i < len; i += 2)
+                {
+                    sb.Append($" {attributes[i]}=\"{XmlEscape(attributes[i + 1])}\"");
+                }
+
+              
+                builder.elements[this.index].attributes = sb.ToString();
+
+            }
+        }
+
+        public struct ChainOnKey
+        {
+            internal int key_element;
+            internal int key_ref;
+            internal XmlBuilder builder;
+            
+
+
+            public ChainOnKey(int key_element, int key_ref, XmlBuilder builder)
+            {
+
+                this.key_element = key_element;
+                this.key_ref = key_ref;
+                this.builder = builder;
+            
+            }
+
+            public void Attributes(params string[] attributes)
+            {
+              
+                int len = attributes.Length;
+                if (len % 2 != 0) { throw new ArgumentException("Tried to add properites with array containing odd number of elements, not atrribute pairs"); }
+
+                StringBuilder sb = new StringBuilder();
+
+                for (int i = 0; i < len; i += 2)
+                {
+                    sb.Append($" {attributes[i]}=\"{XmlEscape(attributes[i + 1])}\"");
+                }
+
+
+                // add attributes for the chained key
+                if (builder.parent_attributes.ContainsKey((this.key_element, this.key_ref)))
+                {
+                    if (builder.parent_attributes[(this.key_element, this.key_ref)] != sb.ToString())
+                    {
+                        //error trying to add attributes to a key that already has attributes set
+                        throw new InvalidOperationException($"Attributes for key ({this.key_element}, {this.key_ref}) already set, you have tried to add differnt attribute values. Use ClearKeys() to reset or ensure second usage of attribute on this key,key value compination are indendtical to previously set value.");
+                    }
+                }
+                else
+                {
+
+
+                    builder.parent_attributes[(this.key_element, this.key_ref)] = sb.ToString();
+                }
+
+
+                // this will be automatically cleared later on when:
+                // 1. if you add a new element that falls under this parent
+                // 2. if you clear all keys
+                // 3. is set_key is used on the same element type again
+
+            }
+
+
+        }
+
+
+
+            // Adds an element to the XML document, recording its value and position.
+
+
+            /// <summary>
+            /// Adds an element to the XML document, recording its value and position.
+            /// </summary>
+            /// <param name="nm_element">The name of the element as defined in the schema.</param>
+            /// <param name="txt_element">The text content of the element.</param>
+            public ChainOnElement AddElement(string nm_element, string txt_element)
         {
             if (schema.txt_schema == null)
             {
@@ -119,6 +231,8 @@ namespace DietXML
             }
 
             position_with_keys.Clear();
+            temp_parent_keys.Clear();
+
 
             try
             {
@@ -129,18 +243,37 @@ namespace DietXML
                 throw new ArgumentException($"Element name '{nm_element}' not found in schema.");
             }
 
-            int currentKeyCount = current_key.Count;
+         //   int currentKeyCount = current_key.Count;
             int positionCount = position.Length;
-            int maxCount = Math.Max(currentKeyCount, positionCount);
+         //    int maxCount = Math.Max(currentKeyCount, positionCount);
 
-            for (int j = 0; j < maxCount; j++)
+            for (int j = 0; j < positionCount; j++)
             {
                 position_with_keys.Add(j < positionCount ? position[j] : 0);
-                position_with_keys.Add(j < currentKeyCount ? current_key[j] : 0);
+
+                int no_element = position[j];
+
+                if (this.current_keys.ContainsKey(no_element))
+                {
+                    // If the current key exists, add it to the position_with_keys list
+                    position_with_keys.Add(current_keys[no_element]);
+                }
+                else
+                {
+                    // If no key exists for this element, add a placeholder (0)
+                    position_with_keys.Add(0);
+                }
+                // If the current key exists and matches the position, add it to the position_with_keys list
+
+
+
             }
 
             no_of_elements_added++;
             this.elements.Add(new element(txt_element, position_with_keys.ToArray()));
+
+            // Return the newly created element for further manipulation if needed.
+            return new ChainOnElement(no_of_elements_added - 1, this);
         }
 
         // Sets the key for a given element, managing hierarchical key paths.
@@ -154,27 +287,34 @@ namespace DietXML
         /// <exception cref="InvalidOperationException">
         /// Thrown if the schema has not been set. Call set_schema() before setting keys.
         /// </exception>
-        public void set_key(string key, string value)
+        public ChainOnKey SetKey(string key, string value)
         {
             if (schema.txt_schema == null) { throw new InvalidOperationException("Schema is not set. Call set_schema() before setting keys."); }
 
 
             int level = schema.read_level(key);
-            while (this.current_key.Count() < level + 1)
-            {
-                current_key.Add(0);
-            }
+            int no_element = schema.read_position(key)[level];
 
-            if (key_list.ContainsKey(value))
+            int no_key;
+            if (key_list.ContainsKey((value, no_element)))
             {
-                current_key[level] = key_list[value];
+                 no_key = key_list[(value, no_element)];
+                 current_keys[no_element] = no_key;
             }
             else
             {
-                key_list.Add(value, key_list.Count + 1);
-                current_key[level] = key_list[value];
+                // If the key does not exist, create a new one and assign it a unique ID
+                key_list.Add((value,no_element),key_list.Count);
+
+                current_keys[no_element] = key_list.Count - 1 ;
+
             }
-            current_key[level] = key_list[value];
+
+
+
+
+            return new ChainOnKey(no_element, key_list.Count -1, this);
+
         }
 
 
@@ -185,11 +325,20 @@ namespace DietXML
         /// <exception cref="InvalidOperationException">
         /// Thrown if the schema has not been set. Call set_schema() before clearing keys.
         /// </exception>
-        public void clear_keys()
+        public void ClearKeys()
         {
             if (schema.txt_schema == null) { throw new InvalidOperationException("Schema is not set. Call set_schema() before clearing keys."); }
-            this.current_key.Clear();
+            this.parent_attributes.Clear();
+            this.current_keys.Clear();
         }
+
+        internal void add_attributes(string attributes, int index)
+        {
+            this.elements[index].attributes = attributes;
+
+        }
+
+
 
         // Gets the element name by its index in the schema.
         private string get_elem_name(int no_elem)
@@ -206,16 +355,16 @@ namespace DietXML
         /// <exception cref="InvalidOperationException">
         /// Thrown if no elements have been added to the XML document.
         /// </exception>
-        public void build_xml()
+        public void BuildXml()
         {
             if (elements.Count == 0)
             {
                 throw new InvalidOperationException("No elements have been added to the XML document.");
             }
           //  schema.print_schema();
-            Console.WriteLine("Sorting XML document");
+            
             sort_elements_by_position();
-            Console.WriteLine("Building XML Tags");
+          
             int no_elems = schema.array_string_element_positions.Count;
             StringBuilder buffer = new StringBuilder();
 
@@ -237,8 +386,23 @@ namespace DietXML
             // Handle the first element seperately to initialize the XML structure - else would error on  elements[i - 1] as i = 0
             foreach (int i in Enumerable.Range(0, current_no_levels))
             {
-                string nm_element = schema.array_elem_names[current_element.get_position(i)];
-                output_xml.AppendLine($"{new string(' ', i * 2)}<{nm_element}>");
+                int no_element = current_element.get_position(i);
+                int no_key = current_element.get_key(i);
+                string v_parent_attributes = string.Empty;
+      
+
+
+                
+
+
+                string nm_element = schema.array_elem_names[no_element];
+                if (parent_attributes.ContainsKey((no_element, no_key)))
+                {
+                    v_parent_attributes = parent_attributes[(no_element, no_key)];
+                }
+
+
+                output_xml.AppendLine($"{new string(' ', i * 2)}<{nm_element + v_parent_attributes}>");
             }
 
             int level = current_element.get_level();
@@ -275,6 +439,7 @@ namespace DietXML
                 // 2. Close all tags from the last element's deepest level down to diffLevel
                 for (int j = last_no_levels - 1; j >= diffLevel; j--)
                 {
+                  
                     string nm_element = schema.array_elem_names[last_element.get_position(j)];
                     output_xml.AppendLine($"{new string(' ', j * 2)}</{nm_element}>");
                 }
@@ -299,14 +464,24 @@ namespace DietXML
                 // 2. Open all tags from diffLevel down to the current element's deepest level
                 for (int j = diffLevel; j < current_no_levels; j++)
                 {
-                    string nm_element = schema.array_elem_names[current_element.get_position(j)];
-                    output_xml.AppendLine($"{new string(' ', j * 2)}<{nm_element}>");
+                    int no_element = current_element.get_position(j);
+                    int no_key = current_element.get_key(j);
+                    string v_parent_attributes = string.Empty;
+                    string nm_element = schema.array_elem_names[no_element];
+                    if (parent_attributes.ContainsKey((no_element,no_key)))
+                    {
+                        v_parent_attributes = parent_attributes[(no_element, no_key)];
+                    }    
+                    output_xml.AppendLine($"{new string(' ', j * 2)}<{nm_element + v_parent_attributes}>");
                 }
 
                 level = current_element.get_level();
                 elemIndex = current_element.get_position(level);
                 elemName = schema.array_elem_names[elemIndex];
-                output_xml.AppendLine($"{new string(' ', level * 2)}<{elemName}>{current_element.txt_element}</{elemName}>");
+                 
+                string attributes = current_element.attributes ?? string.Empty;
+
+                output_xml.AppendLine($"{new string(' ', level * 2)}<{elemName}{attributes}>{current_element.txt_element}</{elemName}>");
             }
             foreach (int i in Enumerable.Range(1, current_no_levels))
             {
