@@ -87,7 +87,7 @@ Console.WriteLine(xb.output_xml);
 ```
 
 Output:
-```
+```XML
 <root>
   <employee>
     <name>John Doe</name>
@@ -127,7 +127,7 @@ xb.BuildXml();
 Console.WriteLine(xb.output_xml);
 ```
 Output
-```
+```XML
 <root>
   <employee>
     <parent3>
@@ -190,7 +190,7 @@ Console.WriteLine(xb.output_xml);
 ```
 Now we see the result of adding keys, with each new key forcing a new element of specified type.
 Output:
-```
+```XML
 <root>
   <employee>
     <parent1>
@@ -245,7 +245,7 @@ Console.WriteLine(xb.output_xml);
 '''
 
 Output:
-'''
+'''XML
 <root>
   <employee id="1">
     <parent1>
@@ -308,7 +308,8 @@ Console.WriteLine(xb.output_xml);
 ```
 
 Output:
-```<root>
+```XML
+<root>
   <employee>
     <parent1>
       <name>John Doe</name>
