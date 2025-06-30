@@ -41,19 +41,13 @@ public class DietXmlSchema
         return array_string_element_positions[nm_element].Item2 - 1;
     }
 
-    internal void clear_key(string nm_element)
-    {
-
-    }
-
-
 
     /// <summary>
     /// Sets the XML schema definition for this builder and parses it to initialize element positions and hierarchy.
     /// </summary>
     /// <param name="txt_schema">The XML schema as a string. Must be well-formed and balanced.</param>
 
-    internal void set_schema(string txt_schema)
+    internal void SetSchema(string txt_schema)
     {
         this.txt_schema = txt_schema;
         this.read_schema();
