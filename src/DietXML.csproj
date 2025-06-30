@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+    <!-- NuGet package metadata -->
+    <PackageId>DietXML</PackageId>
+    <Version>0.2.0</Version>
+    <Authors>Developer-BT</Authors>
+    <Company>Git-Hub Developer-BT</Company>
+    <Description>
+     DietXML — Effortless XML generation with a simple, flat syntax. Define your XML structure in plain text, add elements sequentially, and let DietXML automatically manage nesting and hierarchy. Built for simplicity, maintainability, and high performance—especially when working with deeply nested XML documents.
+    </Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/Developer-BT/DietXML</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Developer-BT/dietXML</PackageProjectUrl>
+    <PackageTags>
+      xml builder
+      xml generation
+      xml writer
+      hierarchical xml
+      simple syntax
+      easy xml
+      minimal xml
+      xml library
+      xml document
+      xml serialization
+      xml manipulation
+      lightweight xml
+      lxml
+      xml utility
+      xml api
+      xml toolkit
+      alternative to linq
+      linq to xml alternative
+      easy to use
+      maintainable
+      fast xml
+    </PackageTags>
+    <Copyright>© 2025 Developer-BT</Copyright>
+
+    <!-- Enable modern C# features -->
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>
