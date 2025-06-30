@@ -798,6 +798,8 @@ Output:
 </company>
 ```
 
+
+<pre>
 Why DietXML is Easier to Write
 •	Schema-Driven Approach:
 With DietXML, you define the entire XML structure up front using a schema. This means you don’t have to repeatedly specify the hierarchy or worry about element/attribute order in your code. You just set keys and add data.
@@ -818,3 +820,5 @@ There’s no risk of forgetting to add a parent element, misplacing a child, or 
 As your XML grows in depth and breadth, DietXML code remains flat and readable. In contrast, LINQ to XML (or manual DOM code) becomes increasingly nested, verbose, and hard to follow.
 •	Easier Onboarding:
 New team members can quickly understand the XML structure by looking at the schema, rather than reverse-engineering nested code.
+
+</pre>
