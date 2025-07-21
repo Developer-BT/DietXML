@@ -59,7 +59,7 @@ diet-xml = "0.1.0-experimental"
 <a name="basic-usage-section"></a>
 ## Basic Usage
 
-See below in this read me for more detailed itroduction to library and runable examples
+*See below in this read me for more detailed introduction to library and runable examples*
 
 ```rust
 use diet_xml::XmlBuilder;
