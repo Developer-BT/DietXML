@@ -99,7 +99,6 @@ Traditional XML builders in Rust can be verbose and error-prone. diet-xml takes 
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Contributing
 **Note**: This crate is experimental. Use in production at your own risk.
 
 <a name="examples-section"></a>
