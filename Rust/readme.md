@@ -425,8 +425,8 @@ Here we see the keys were all ignored, due to the `clear_keys()` method being ca
 ### Why this library exists
 - The below code is roughly equivilent in function to the quick-xml/serde example below
 - diet-xml can do in a few dozen lines of code what takes hundreds of lines in some mainstream libraries  
-### below quick-xml + serde
 
+##diet-xml verison
 ### Cargo.toml
 -ensure the followig dependancies are included
 
@@ -668,6 +668,7 @@ fn parse_csv(csv_text: String) -> CsvData {
 
 
 
+##quick-xml / serde verison
 Cargo.toml
 
 ```
