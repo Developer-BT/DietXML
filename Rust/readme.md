@@ -426,23 +426,7 @@ Here we see the keys were all ignored, due to the `clear_keys()` method being ca
 - The below code is roughly equivilent in function to the quick-xml/serde example below
 - diet-xml can do in a few dozen lines of code what takes hundreds of lines in some mainstream libraries  
 
-##diet-xml verison
-### Cargo.toml
--ensure the followig dependancies are included
-
-```
-[package]
-name = "testcrate"
-version = "0.1.0"
-edition = "2024"
-
-[dependencies]
-csv = "1.3.1"
-diet-xml
-reqwest = { version = "0.12.22", features = ["blocking"] }
-```
-
-
+## diet-xml verison
 
 
  ``` rust
@@ -668,7 +652,7 @@ fn parse_csv(csv_text: String) -> CsvData {
 
 
 
-##quick-xml / serde verison
+## quick-xml / serde verison
 Cargo.toml
 
 ```
