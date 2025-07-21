@@ -417,7 +417,15 @@ Here we see the keys were all ignored, due to the `clear_keys()` method being ca
 
 <a name="large-dataset-section"></a>
 ### Large Dataset
-- here we will use a csv stored on the DietXML github page to produce a large xml
+- here we will use a csv stored on the DietXML github page to produce a larger xml
+
+<a name="comparison-section"></a>
+## Comparison
+
+### Why this library exists
+- The below code is roughly equivilent in function to the quick-xml/serde example below
+- diet-xml can do in a few dozen lines of code what takes hundreds of lines in some mainstream libraries  
+### below quick-xml + serde
 
 ### Cargo.toml
 -ensure the followig dependancies are included
@@ -658,13 +666,7 @@ fn parse_csv(csv_text: String) -> CsvData {
 </root>
 ```
 
-<a name="comparison-section"></a>
-## Comparison
 
-### Why this library exists
-- The above code is roughly equivilent in function to the below
-- diet-xml can do in a few dozen lines of code what takes hundreds of lines in some mainstream libraries  
-### below quick-xml + serde
 
 Cargo.toml
 
