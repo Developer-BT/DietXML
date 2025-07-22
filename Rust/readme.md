@@ -7,20 +7,17 @@
 
 ### **Minimal boilerplate. Maximum clarity. Effortless XML.**
 
-**`diet-xml` makes XML generation ridiculously simple.**  
-Define your XML structure once using a clean, human-readable template — then just fill in the data.
+**`diet-xml` XML generation rmade simple.**  
+Define a human readable structure, then populate with procedural code.
+- nesting and grouping handled by the library
+- eveything done with a handful of methods
 
-- ✅ No verbose builders  
-- ✅ No tangled nesting  
-- ✅ No confusing syntax  
-
-With `diet-xml`, you get high-level control and low-friction development — perfect for building complex XML documents with procedural clarity and minimal overhead.
-
-> Skip the boilerplate. Focus on your data.
+`diet-xml` allows for rapid development and high flexibility.
+Reduces boiler plate and nesting and allows for maintainable code.
 
 ---
 
-🔧 **Use Case**: Ideal for generating structured XML from dynamic sources like CSVs, APIs, or database rows — especially when structure is known ahead of time.
+🔧 **Use Case**: Ideal for generating deeply hierarchical and grouped XML from  sources like CSVs, APIs and database rows.
 
 📦 **Install** (in `Cargo.toml`):
 
@@ -54,17 +51,14 @@ The API is still evolving. Expect changes in naming, behavior, and error handlin
 
 Planned features:
 
-    XML headers
-
+    CDATA
+    headers
     Pretty formatting options
-
     Improved error diagnostics
-
     Performance optimization
-
     Streaming support
-
     Read/query support (long-term)
+    
 
 <a name="quick-start-section"></a>
 ## Quick Start
@@ -83,12 +77,15 @@ diet-xml = "0.1.0-experimental"
 
 ```rust
 use diet_xml::XmlBuilder;
+
 let mut xb = XmlBuilder::new();
+
 xb.set_schema("<root><item><value></value></item></root>");
-xb.set_key("root", "1");
-xb.set_key("item", "1");
+
 xb.add_element("value", "42");
+
 xb.build_xml();
+
 println!("{}", xb.xml_out());
 ```
 
@@ -106,20 +103,15 @@ println!("{}", xb.xml_out());
 
 - `XmlBuilder::new()` - Create a new XML builder
 - `set_schema(schema)` - Define the XML structure template
-- `set_key(element, key)` - Select which instance of an element to work with
+- `set_key(element, key)` - Select which instance of a parent element to assign any added elements under
 - `add_element(name, value)` - Add content to an element
 - `build_xml()` - Generate the final XML
 - `xml_out()` - Get the resulting XML string
-
-## Why diet-xml?
-
-Traditional XML builders in Rust can be verbose and error-prone. diet-xml takes a different approach:
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-**Note**: This crate is experimental. Use in production at your own risk.
 
 <a name="examples-section"></a>
 ## Examples
@@ -167,7 +159,7 @@ Parent elements are implicitly built in diet-xml - we simply add them to the sch
 <a name="parent-elements-section"></a>
 ### Parent Elements
 
-Parent elements are automatically included in the document - you simply add them to the schema definition:
+Parent elements are automatically included in the document - you simply add them to the schema definition and no extra coding is required to include them:
 
 ```rust
 use diet_xml::XmlBuilder;
