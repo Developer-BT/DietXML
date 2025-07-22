@@ -20,6 +20,9 @@ Define a human readable schema, then populate with procedural code.
 
 📦 **Install** (in `Cargo.toml`):
 
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 ### Why this library exists:
 [diet-xml vs quick-xml comparison - see detailed example below](#comparison-section)
 
@@ -29,7 +32,6 @@ See the examples below - and be generating XML in under 5 minutes.
 
 ## Table of Contents
 - [Quick Start](#quick-start-section)
-- [Basic Usage](#basic-usage-section)
 - [API Overview](#api-overview-section)
 - [Examples](#examples-section)
   - [Basic Example](#basic-example-section)
@@ -67,34 +69,6 @@ Add this to your `Cargo.toml`:
 diet-xml = "0.1.0-experimental"
 ```
 
-<a name="basic-usage-section"></a>
-## Basic Usage
-
-*See below in this README for more detailed introduction to library and runnable examples*
-
-```rust
-use diet_xml::XmlBuilder;
-
-let mut xb = XmlBuilder::new();
-
-xb.set_schema("<root><item><value></value></item></root>");
-
-xb.add_element("value", "42");
-
-xb.build_xml();
-
-println!("{}", xb.xml_out());
-```
-
-**Output:**
-```xml
-<root>
-  <item>
-    <value>42</value>
-  </item>
-</root>
-```
-
 <a name="api-overview-section"></a>
 ## API Overview
 
@@ -105,9 +79,7 @@ println!("{}", xb.xml_out());
 - `build_xml()` - Generate the final XML
 - `xml_out()` - Get the resulting XML string
 
-## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 
 <a name="examples-section"></a>
