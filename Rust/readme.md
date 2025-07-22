@@ -7,17 +7,16 @@
 
 ### **XML generation made simple.**
 
-
+`diet-xml`
 Define a human readable schema, then populate with procedural code.
 - nesting and grouping handled by the library
-- eveything done with a handful of methods
-
-`diet-xml` allows for rapid development and high flexibility.
-Reduces boiler plate and nesting and allows for maintainable code.
+- simple procedural methods
+- more maintainable code
+- less boiler plate
 
 ---
 
-🔧 **Use Case**: Ideal for generating deeply hierarchical and grouped XML from sources like CSVs, APIs and database rows.
+🔧 **Use Case**: Ideal for generating deeply hierarchical and grouped XML from sources like CSVs, APIs and database rows. When you need a library you can just pick up and use.
 
 📦 **Install** (in `Cargo.toml`):
 
