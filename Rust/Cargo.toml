@@ -1,0 +1,17 @@
+[package]
+name = "diet-xml"
+version = "0.1.0-experimental"
+edition = "2021"
+authors = ["DEVELOPER-BT"]
+description = "Fast, schema-driven XML builder with ergonomic API. Build XML documents from templates with type safety and minimal boilerplate. ⚠️ Experimental: API may change."
+license = "MIT"
+repository = "https://github.com/Developer-BT/DietXML/tree/main/Rust"
+homepage = "https://github.com/Developer-BT/DietXML"
+documentation = "https://docs.rs/diet-xml"
+readme = "README.md"
+keywords = ["xml", "builder", "documents", "simple", "writer"]
+categories = ["data-structures", "development-tools", "encoding"]
+rust-version = "1.79"
+
+[dependencies]
+fxhash = "0.2.1"
