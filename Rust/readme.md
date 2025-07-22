@@ -5,21 +5,31 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
+### **Minimal boilerplate. Maximum clarity. Effortless XML.**
 
-A fast, schema-driven XML builder with an ergonomic API. Build XML documents from text defined schema with minimal boilerplate.
+**`diet-xml` makes XML generation ridiculously simple.**  
+Define your XML structure once using a clean, human-readable template — then just fill in the data.
 
-This is designed to be both high level and capable of handling complex structures in less code.
-An emphasis on avoiding hard to maintain deeply nested code.
-This library allows for rapid devlopement, easy to maintain procedural code and complex document generation.
+- ✅ No verbose builders  
+- ✅ No tangled nesting  
+- ✅ No confusing syntax  
+
+With `diet-xml`, you get high-level control and low-friction development — perfect for building complex XML documents with procedural clarity and minimal overhead.
+
+> Skip the boilerplate. Focus on your data.
+
+---
+
+🔧 **Use Case**: Ideal for generating structured XML from dynamic sources like CSVs, APIs, or database rows — especially when structure is known ahead of time.
+
+📦 **Install** (in `Cargo.toml`):
 
 ### Why this library exists:
 [diet-xml vs quick-xml comparison - see detailed example below](#comparison-section)
 
 
-**diet-xml makes XML generation ridiculously simple.** Just define your XML structure once as a template, then fill in the data. 
--No complex syntax
--only configoration in human readable schema definition
--no fighting with nested builders. 
+
+
 
 See the examples below - and be generating XML in under 5 minutes.
 
@@ -39,12 +49,22 @@ See the examples below - and be generating XML in under 5 minutes.
 
 
 
-> ⚠️ **Experimental**: This crate is in early development. API and features may change.
-Planned featured
-- Document headers
-- Additional formatting options
-- Error handling rework
-- Heavy optimisation
+⚠️ Experimental crate
+The API is still evolving. Expect changes in naming, behavior, and error handling.
+
+Planned features:
+
+    XML headers
+
+    Pretty formatting options
+
+    Improved error diagnostics
+
+    Performance optimization
+
+    Streaming support
+
+    Read/query support (long-term)
 
 <a name="quick-start-section"></a>
 ## Quick Start
@@ -59,7 +79,7 @@ diet-xml = "0.1.0-experimental"
 <a name="basic-usage-section"></a>
 ## Basic Usage
 
-*See below in this read me for more detailed introduction to library and runable examples*
+*See below in this README for more detailed introduction to library and runnable examples*
 
 ```rust
 use diet_xml::XmlBuilder;
@@ -113,7 +133,7 @@ use diet_xml::XmlBuilder;
 fn main() {
     let mut xb: XmlBuilder = XmlBuilder::new();
 
-    // schemas are defined in plan text but must well formed with matching Tag, this is validated by the library
+    // schemas are defined in plain text but must well formed with matching Tag, this is validated by the library
     let txt_schema = 
     "<root>
         <department>
@@ -233,7 +253,7 @@ fn main() {
 **Output:** 
 **Output:**
 
-We see there are two elements added, but we see they are nested next to each other in the hierarchy.
+We see there are two elements added, but we see they appear side by side within the same parent element.
 
 ```xml
 ``` xml
@@ -250,9 +270,9 @@ We see there are two elements added, but we see they are nested next to each oth
 -This is because the parents all have the same keys, as such there is only one of each parent element
 
 -Say we want to place these different <name> elements in seperate <employee> elements we must use the set key method
-- This again takes text as arguments and you provide the nm_element (must be in schema) and key
+- This again takes text as arguments and you provide the element name (nm_element) (must be in schema) and key
 - When you add an element after this, it will be grouped according to this key
-= (whenever no group has been assigned, or has been clear and not assigned, everything will be group together in the same default group and appear first in the document order)
+= (whenever no group has been assigned, or has been clear and not assigned, everything will be grouped together in the same default group and appear first in the document order)
 
 <a name="using-keys-section"></a>
 ### Using Keys
@@ -304,6 +324,7 @@ fn main() {
 ### Attributes
 
 This can either be chained to a `set_key` to apply to a parent element before adding the next element, or it can be added to the element itself, to be displayed on the deepest element (the one you pass a value on):
+-chaining has been deliberately limited to .attributes() to prevent generation of dense unmaintable code
 
 ```rust
 use diet_xml::XmlBuilder;
@@ -312,7 +333,7 @@ fn main() {
 
 let mut xb: XmlBuilder = XmlBuilder::new();
 
-// schemas are defined in plan text but must well formed with matching Tag, this is validated byvthe library
+// schemas are defined in plan text but must well formed with matching Tag, this is validated by the library
 let txt_schema = 
 "<root> <g1><g2><g3><g4><g5><g6>
     <department>
@@ -350,10 +371,10 @@ println!("{}", xb.xml_out());
           <g5>
             <g6>
               <department>
-                <employee id="1" initial="JD">
+                <employee id="1" initials="JD">
                   <name>John Dough</name>
                 </employee>
-                <employee id="2" initial="JD">
+                <employee id="2" initials="JD">
                   <name CITY="PARIS">Jane Dough</name>
                 </employee>
               </department>
@@ -369,7 +390,7 @@ println!("{}", xb.xml_out());
 <a name="clear-keys-section"></a>
 ### Clear Keys
 
-Here we clear keys after setting them. This demonstrates how clear keys resets the key grouping to a default. When building complicated structures, it can be best to clear keys at the end of iterations, before moving onto the next:
+Here we clear keys after setting them. This demonstrates how clearing keys resets grouping to the default state. When building complicated structures, it can be best to clear keys at the end of iterations, before moving onto the next:
 
 ```rust
 use diet_xml::XmlBuilder;
@@ -422,10 +443,10 @@ Here we see the keys were all ignored, due to the `clear_keys()` method being ca
 ## Comparison
 
 ### Why this library exists
-- The below code is roughly equivilent in function to the quick-xml/serde example below
-- diet-xml can do in a few dozen lines of code what takes hundreds of lines in some mainstream libraries  
+- The below code is roughly equivalent in function to the quick-xml/serde example below
+- diet-xml can accomplish in a few dozen lines what other libraries require hundreds of lines to do
 
-## diet-xml verison
+## diet-xml version
 
 
  ``` rust
@@ -653,7 +674,7 @@ fn parse_csv(csv_text: String) -> CsvData {
 
 
 
-## quick-xml / serde verison
+## quick-xml / serde version
 Cargo.toml
 
 ```
