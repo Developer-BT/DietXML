@@ -5,10 +5,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
-### **Minimal boilerplate. Maximum clarity. Effortless XML.**
+### **XML generation made simple.**
 
-**`diet-xml` XML generation rmade simple.**  
-Define a human readable structure, then populate with procedural code.
+
+Define a human readable schema, then populate with procedural code.
 - nesting and grouping handled by the library
 - eveything done with a handful of methods
 
@@ -17,14 +17,12 @@ Reduces boiler plate and nesting and allows for maintainable code.
 
 ---
 
-🔧 **Use Case**: Ideal for generating deeply hierarchical and grouped XML from  sources like CSVs, APIs and database rows.
+🔧 **Use Case**: Ideal for generating deeply hierarchical and grouped XML from sources like CSVs, APIs and database rows.
 
 📦 **Install** (in `Cargo.toml`):
 
 ### Why this library exists:
 [diet-xml vs quick-xml comparison - see detailed example below](#comparison-section)
-
-
 
 
 
